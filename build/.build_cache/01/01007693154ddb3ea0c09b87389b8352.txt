@@ -1,0 +1,12 @@
+{
+    errdata = "\27[01m\27[Ksrc/main.cpp:\27[m\27[K In function ‘\27[01m\27[Kint\27[01;32m\27[K main\27[m\27[K()\27[m\27[K’:\
+\27[01m\27[Ksrc/main.cpp:62:23:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kempty parentheses were disambiguated as a function declaration [\27[01;35m\27[K-Wvexing-parse\27[m\27[K]\
+   62 |         Shader program\27[01;35m\27[K()\27[m\27[K;\
+      |                       \27[01;35m\27[K^~\27[m\27[K\
+\27[01m\27[Ksrc/main.cpp:62:23:\27[m\27[K \27[01;36m\27[Knote: \27[m\27[Kremove parentheses to default-initialize a variable\
+   62 |         Shader program\27[01;36m\27[K()\27[m\27[K;\
+      |                       \27[01;36m\27[K^~\27[m\27[K\
+      |                       \27[31m\27[K--\27[m\27[K\
+\27[01m\27[Ksrc/main.cpp:62:23:\27[m\27[K \27[01;36m\27[Knote: \27[m\27[Kor replace parentheses with braces to value-initialize a variable\
+"
+}

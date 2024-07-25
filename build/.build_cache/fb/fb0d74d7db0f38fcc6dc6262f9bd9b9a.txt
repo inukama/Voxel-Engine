@@ -1,0 +1,30 @@
+{
+    errdata = "\27[01m\27[Ksrc/game.cpp:\27[m\27[K In destructor ‘\27[01m\27[KRegion::\27[01;32m\27[K~Region\27[m\27[K()\27[m\27[K’:\
+\27[01m\27[Ksrc/game.cpp:58:43:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Region*)this)->Region::data[x][y]\27[m\27[K’\
+   58 |                         delete[] \27[01;35m\27[Kdata[x][y]\27[m\27[K;\
+      |                                  \27[01;35m\27[K~~~~~~~~~^\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:60:32:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Region*)this)->Region::data[x]\27[m\27[K’\
+   60 |                 delete[] \27[01;35m\27[Kdata[x]\27[m\27[K;\
+      |                          \27[01;35m\27[K~~~~~~^\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:62:18:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Region*)this)->Region::data\27[m\27[K’\
+   62 |         delete[] \27[01;35m\27[Kdata\27[m\27[K;\
+      |                  \27[01;35m\27[K^~~~\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:\27[m\27[K In destructor ‘\27[01m\27[KChunk::\27[01;32m\27[K~Chunk\27[m\27[K()\27[m\27[K’:\
+\27[01m\27[Ksrc/game.cpp:77:43:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Chunk*)this)->Chunk::data[x][y]\27[m\27[K’\
+   77 |                         delete[] \27[01;35m\27[Kdata[x][y]\27[m\27[K;\
+      |                                  \27[01;35m\27[K~~~~~~~~~^\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:81:32:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Chunk*)this)->Chunk::data[x]\27[m\27[K’\
+   81 |                 delete[] \27[01;35m\27[Kdata[x]\27[m\27[K;\
+      |                          \27[01;35m\27[K~~~~~~^\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:84:18:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((Chunk*)this)->Chunk::data\27[m\27[K’\
+   84 |         delete[] \27[01;35m\27[Kdata\27[m\27[K;\
+      |                  \27[01;35m\27[K^~~~\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:\27[m\27[K In destructor ‘\27[01m\27[KRegion::\27[01;32m\27[K~Region\27[m\27[K()\27[m\27[K’:\
+\27[01m\27[Ksrc/game.cpp:62:18:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[K‘\27[01m\27[Kvoid\27[01;32m\27[K operator delete []\27[m\27[K(void*)\27[m\27[K’ called on pointer ‘\27[01m\27[K<unknown>\27[m\27[K’ with nonzero offset 16 [\27[01;35m\27[K-Wfree-nonheap-object\27[m\27[K]\
+   62 |         delete[] \27[01;35m\27[Kdata\27[m\27[K;\
+      |                  \27[01;35m\27[K^~~~\27[m\27[K\
+\27[01m\27[Ksrc/game.cpp:64:13:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[K‘\27[01m\27[Kvoid\27[01;32m\27[K free\27[m\27[K(void*)\27[m\27[K’ called on pointer ‘\27[01m\27[K<unknown>\27[m\27[K’ with nonzero offset 16 [\27[01;35m\27[K-Wfree-nonheap-object\27[m\27[K]\
+   64 |         \27[01;35m\27[Kfree(data)\27[m\27[K;\
+      |         \27[01;35m\27[K~~~~^~~~~~\27[m\27[K\
+"
+}

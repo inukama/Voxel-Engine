@@ -1,0 +1,13 @@
+{
+    glfw3 = {
+        __requirestr = "glfw3",
+        envs = {
+            LD_LIBRARY_PATH = {
+                "/home/kommy/.xmake/packages/g/glfw3/latest/4e0143c97b65425b855ad5fd03038b6a/lib"
+            }
+        },
+        version = "3.4.0",
+        links = "glfw",
+        __enabled = true
+    }
+}

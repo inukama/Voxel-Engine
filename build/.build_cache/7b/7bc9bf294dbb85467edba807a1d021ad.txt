@@ -1,0 +1,6 @@
+{
+    errdata = "\27[01m\27[Ksrc/inputs.c:7:1:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kreturn type defaults to ‘\27[01m\27[Kint\27[m\27[K’ [\27[01;35m\27[K-Wimplicit-int\27[m\27[K]\
+    7 | \27[01;35m\27[KprocessInputs\27[m\27[K( GLFWwindow *window )\
+      | \27[01;35m\27[K^~~~~~~~~~~~~\27[m\27[K\
+"
+}

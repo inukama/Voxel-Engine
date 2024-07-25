@@ -1,0 +1,7 @@
+{
+    errdata = "\27[01m\27[Ksrc/game.cpp:\27[m\27[K In destructor ‘\27[01m\27[KWorld::\27[01;32m\27[K~World\27[m\27[K()\27[m\27[K’:\
+\27[01m\27[Ksrc/game.cpp:35:16:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdeleting array ‘\27[01m\27[K((World*)this)->World::data\27[m\27[K’\
+   35 |         delete\27[01;35m\27[K(data)\27[m\27[K;\
+      |               \27[01;35m\27[K~^~~~~\27[m\27[K\
+"
+}

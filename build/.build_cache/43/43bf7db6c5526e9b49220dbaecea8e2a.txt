@@ -1,0 +1,15 @@
+{
+    errdata = "\27[01m\27[Ksrc/inputs.c:\27[m\27[K In function ‘\27[01m\27[KprocessInputs\27[m\27[K’:\
+\27[01m\27[Ksrc/inputs.c:9:5:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kimplicit declaration of function ‘\27[01m\27[Kprintf\27[m\27[K’ [\27[01;35m\27[K-Wimplicit-function-declaration\27[m\27[K]\
+    9 |     \27[01;35m\27[Kprintf\27[m\27[K(\"bruh\\n\");\
+      |     \27[01;35m\27[K^~~~~~\27[m\27[K\
+\27[01m\27[Ksrc/inputs.c:5:1:\27[m\27[K \27[01;36m\27[Knote: \27[m\27[Kinclude ‘\27[01m\27[K<stdio.h>\27[m\27[K’ or provide a declaration of ‘\27[01m\27[Kprintf\27[m\27[K’\
+    4 |         #include <GLFW/glfw3.h>\
+  +++ |+\27[32m\27[K#include <stdio.h>\27[m\27[K\
+    5 | #endif\
+\27[01m\27[Ksrc/inputs.c:9:5:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kincompatible implicit declaration of built-in function ‘\27[01m\27[Kprintf\27[m\27[K’ [\27[01;35m\27[K-Wbuiltin-declaration-mismatch\27[m\27[K]\
+    9 |     \27[01;35m\27[Kprintf\27[m\27[K(\"bruh\\n\");\
+      |     \27[01;35m\27[K^~~~~~\27[m\27[K\
+\27[01m\27[Ksrc/inputs.c:9:5:\27[m\27[K \27[01;36m\27[Knote: \27[m\27[Kinclude ‘\27[01m\27[K<stdio.h>\27[m\27[K’ or provide a declaration of ‘\27[01m\27[Kprintf\27[m\27[K’\
+"
+}

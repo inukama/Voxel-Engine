@@ -1,0 +1,7 @@
+{
+    errdata = "\27[01m\27[Ksrc/game.cpp:\27[m\27[K In member function ‘\27[01m\27[KRegion* World::\27[01;32m\27[Kget_region\27[m\27[K(glm::vec<3, int, glm::packed_highp>)\27[m\27[K’:\
+\27[01m\27[Ksrc/game.cpp:94:1:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kcontrol reaches end of non-void function [\27[01;35m\27[K-Wreturn-type\27[m\27[K]\
+   94 | \27[01;35m\27[K}\27[m\27[K\
+      | \27[01;35m\27[K^\27[m\27[K\
+"
+}

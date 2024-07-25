@@ -1,0 +1,8 @@
+{
+    errdata = "In file included from \27[01m\27[Ksrc/main.c:10\27[m\27[K:\
+\27[01m\27[Ksrc/inputs.h:1:1:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kdata definition has no type or storage class\
+    1 | \27[01;35m\27[KprocessInputs\27[m\27[K( GLFWwindow *window );\
+      | \27[01;35m\27[K^~~~~~~~~~~~~\27[m\27[K\
+\27[01m\27[Ksrc/inputs.h:1:1:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Ktype defaults to ‘\27[01m\27[Kint\27[m\27[K’ in declaration of ‘\27[01m\27[KprocessInputs\27[m\27[K’ [\27[01;35m\27[K-Wimplicit-int\27[m\27[K]\
+"
+}

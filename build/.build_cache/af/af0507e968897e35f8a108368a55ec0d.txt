@@ -1,0 +1,7 @@
+{
+    errdata = "In file included from \27[01m\27[Ksrc/game.cpp:3\27[m\27[K:\
+\27[01m\27[Ksrc/game.h:22:8:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kextra tokens at end of #endif directive [\27[01;35m\27[K-Wendif-labels\27[m\27[K]\
+   22 | #endif \27[01;35m\27[KGAME_H\27[m\27[K\
+      |        \27[01;35m\27[K^~~~~~\27[m\27[K\
+"
+}

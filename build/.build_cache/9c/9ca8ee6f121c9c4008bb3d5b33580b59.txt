@@ -1,0 +1,17 @@
+{
+    errdata = "\27[01m\27[Ksrc/shader.cpp:\27[m\27[K In constructor ‘\27[01m\27[KShader::\27[01;32m\27[KShader\27[m\27[K(const char*, const char*)\27[m\27[K’:\
+\27[01m\27[Ksrc/shader.cpp:20:56:\27[m\27[K \27[01;35m\27[Kwarning: \27[m\27[Kignoring return value of ‘\27[01m\27[Kstd::__cxx11::basic_string<_CharT, _Traits, _Allocator> std::\27[01;32m\27[Koperator+\27[m\27[K(__cxx11::basic_string<_CharT, _Traits, _Allocator>&&, const __cxx11::basic_string<_CharT, _Traits, _Allocator>&) \27[35m\27[K[with _CharT = char; _Traits = char_traits<char>; _Alloc = allocator<char>]\27[m\27[K\27[m\27[K’, declared with attribute ‘\27[01m\27[Knodiscard\27[m\27[K’ [\27[01;35m\27[K-Wunused-result\27[m\27[K]\
+   20 |     c_path.substr(0,c_path.rfind(\"GOL/\") + 4 ) + c_path\27[01;35m\27[K;\27[m\27[K\
+      |                                                        \27[01;35m\27[K^\27[m\27[K\
+In file included from \27[01m\27[K/usr/include/c++/13.2.1/string:54\27[m\27[K,\
+                 from \27[01m\27[K/usr/include/c++/13.2.1/bits/locale_classes.h:40\27[m\27[K,\
+                 from \27[01m\27[K/usr/include/c++/13.2.1/bits/ios_base.h:41\27[m\27[K,\
+                 from \27[01m\27[K/usr/include/c++/13.2.1/ios:44\27[m\27[K,\
+                 from \27[01m\27[K/usr/include/c++/13.2.1/ostream:40\27[m\27[K,\
+                 from \27[01m\27[K/usr/include/c++/13.2.1/iostream:41\27[m\27[K,\
+                 from \27[01m\27[Ksrc/shader.cpp:5\27[m\27[K:\
+\27[01m\27[K/usr/include/c++/13.2.1/bits/basic_string.h:3625:5:\27[m\27[K \27[01;36m\27[Knote: \27[m\27[Kdeclared here\
+ 3625 |     \27[01;36m\27[Koperator\27[m\27[K+(basic_string<_CharT, _Traits, _Alloc>&& __lhs,\
+      |     \27[01;36m\27[K^~~~~~~~\27[m\27[K\
+"
+}
