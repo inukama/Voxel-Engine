@@ -25,6 +25,7 @@
 #include "inputs.h"
 #include "shader.h"
 #include "game.h"
+#include "player.h"
 
 #define WIDTH 1200
 #define HEIGHT 600
@@ -45,8 +46,10 @@ GLFWwindow* initialise(void);
 
 
 int main(void) {
+	// Logger setup
 	spdlog::set_level(spdlog::level::debug);
 
+	// Initialise window and create program
 	GLFWwindow* window = initialise();
 	if (window == nullptr) return -1;
 
@@ -59,6 +62,7 @@ int main(void) {
 	double time_before = time_0;
 	double time_after;
 
+	// Set up model data 
 	float vertices[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -122,12 +126,14 @@ int main(void) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	// Retrieve and buffer texture data
 	int width;
 	int height;
 	int nrChannels;
-	// ROOT is a preprocessor directive filled by xmake
+	
+	// ROOT is a preprocessor directive processed by xmake
 	std::string root_dir = ROOT;
-	std::string img_dir = "/resources/textures/grass.jpg";
+	std::string img_dir = "/resources/textures/grass16.png";
 	std::string full_img_dir = root_dir + img_dir;
 	spdlog::info("Loading image data from directory: {}", full_img_dir);
 	float *image_data = stbi_loadf(full_img_dir.c_str(), &width, &height, &nrChannels, 0);
@@ -138,33 +144,26 @@ int main(void) {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (image_data && nrChannels == 3) {
 		spdlog::info("Buffering image data");
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, image_data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
+	} else {
 		spdlog::error("Failed to load texture");
 	}	
 
 	stbi_image_free(image_data);
 
+	// Set up transformation matrices and other things
 	glm::mat4 mat_projection = glm::perspective(glm::radians(45.0f), ASPECT, 0.1f, 100.0f);
 	unsigned int u_projection = glGetUniformLocation(program.id(), "projection");
 	glUniformMatrix4fv(u_projection, 1, false, (const float*) &mat_projection[0]);
 
-	glm::vec3 camera_position = glm::vec3(0.0, 0.0, 0.0);
-	// Camera position relative to player centre.
-	glm::vec3 camera_rel_position = glm::vec3(0.0, 0.75, 0.0);
-	glm::vec3 player_position = glm::vec3(0.0, 0.0, 0.0);
-	// Spindle collision detection
-	glm::vec3 hitbox = glm::vec3(0.6, 1.8, 0.6); 
-	// Each component represents the rotation in degrees around that axis
-	glm::vec3 camera_rotation = glm::vec3(0.0, 0.0, 0.0);	
 
+	// Begin generating world data
 	spdlog::info("Creating World object");
 	World map;	
 
@@ -172,7 +171,7 @@ int main(void) {
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
-				spdlog::debug("{}",round(20.0f * perlin2d(x, z, 0.04, 5)) );
+				//spdlog::debug("{}",round(20.0f * perlin2d(x, z, 0.04, 5)) );
 				if(y > round(20.0f * perlin2d(x, z, 0.04, 5))) {
 					map.set_block(glm::vec3(x, y, z), grass);
 				} else {
@@ -189,11 +188,13 @@ int main(void) {
 	glm::vec<2, double> mouse_delta;
 
 	// Spawn pos
-	player_position = glm::vec3(0.0, 40.0, 0.0);
-	camera_position = player_position + camera_rel_position;
-	glm::vec3 floor_height = player_position;
+	Player player;
+	player.body.position = glm::vec3(0.0, 40.0, 0.0);
+	player.body.velocity = glm::vec3(0.0, 0.0, 0.0);
+
+	glm::vec3 floor_height = player.body.position;
 	glm::vec3 player_gravity = glm::vec3(0.0, -30.0, 0.0);
-	glm::vec3 player_velocity = glm::vec3(0.0, 0.0, 0.0);
+	
 	bool grounded;
 
 	spdlog::info("Starting render loop");
@@ -226,17 +227,34 @@ int main(void) {
 			movement_direction += glm::vec3(-1.0, 0.0, 0.0);
 		}
 
-		if (grounded && glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			player_velocity.y = JUMP_POWER;
-			grounded = false;
-		}
 
 		movement_direction = glm::normalize(movement_direction);
 		if (isnan(movement_direction.x)) {
 			movement_direction = glm::vec3(0.0f);
 		}
+		
+		glm::mat4 mat_view(1);
+		mat_view = glm::rotate(mat_view, player.camera.rotation.x, glm::vec3(1.0, 0.0, 0.0));
+		mat_view = glm::rotate(mat_view, player.camera.rotation.y, glm::vec3(0.0, 1.0, 0.0));
+		mat_view = glm::rotate(mat_view, player.camera.rotation.z, glm::vec3(0.0, 0.0, 1.0));
 
-		movement_direction = glm::rotateY(movement_direction, (float) M_PI - camera_rotation.y);
+		movement_direction = glm::rotateX(movement_direction, player.camera.rotation.x);
+		movement_direction = glm::rotateY(movement_direction, (float) M_PI - player.camera.rotation.y);
+		
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+			movement_direction += glm::vec3(0.0, 1.0, 0.0);
+		}
+		
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+			movement_direction += glm::vec3(0.0, -1.0, 0.0);
+		}
+
+
+		player.body.position += movement_direction * 8.0f * (float) time_delta;
+		
+		mat_view = glm::translate(mat_view, -(player.body.position + player.camera.position));
+		unsigned int u_view = glGetUniformLocation(program.id(), "view");
+		glUniformMatrix4fv(u_view, 1, false, (const float*) &mat_view[0]);
 
 		// Transform mouse from pixels to NDC
 		mouse = 2.0*mouse/DIMS;
@@ -252,10 +270,10 @@ int main(void) {
 		
 		// Camera rotation and translation stuff
 		
-		camera_rotation.x += 0.005f*mouse_delta.y;
-		camera_rotation.y += 0.005f*mouse_delta.x;
+		player.camera.rotation.x += 0.005f*mouse_delta.y;
+		player.camera.rotation.y += 0.005f*mouse_delta.x;
 
-		camera_rotation.x = clamp(camera_rotation.x, -M_PI_2, M_PI_2);
+		player.camera.rotation.x = clamp(player.camera.rotation.x, -M_PI_2, M_PI_2);
 		
 		program.use();
 
@@ -277,51 +295,25 @@ int main(void) {
 		} 
 		
 		glm::vec3 temp_floor_height = glm::vec3(-100000.0f);
-		glm::vec<3, int> rd_player_pos = floor(player_position - hitbox/2.0f + 0.5f);
-
-		// TEMPORARY	
-		glm::vec3 fpos = floor(player_position - hitbox/2.0f + 0.5f);
-		glm::mat4 mat_model(1);	
-		mat_model = glm::translate(mat_model, fpos);
-		mat_model = glm::scale(mat_model, glm::vec3(1.1, 1.1, 1.1));
-		
-		unsigned int u_model = glGetUniformLocation(program.id(), "model");
-		glUniformMatrix4fv(u_model, 1, false, (const float*) &mat_model[0]);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		// TEMPORARY
+		glm::vec<3, int> fpos = floor(player.body.position - player.hitbox/2.0f + 0.5f - 0.001f);
 
 		glm::vec3 movement_mask = glm::vec3(1, 1, 1);
 
 		//spdlog::debug("Falling on type {} @ ({}, {}, {})", (int) map.get_block(rd_player_pos).type, rd_player_pos.x, rd_player_pos.y, rd_player_pos.z);
-		glm::vec3 check = player_position;
+		glm::vec3 check = player.body.position;
 		//spdlog::debug("@ ({}, {}, {})", check.x, check.y, check.z);
 		if (map.get_block(fpos).type == grass) {
-			player_position.y = rd_player_pos.y + hitbox.y/2.0f + 0.5f;
-			player_velocity.y = 0.0f;
+			player.body.position.y = fpos.y + player.hitbox.y/2.0f + 0.5f;
+			player.body.velocity.y = 0.0f;
 			grounded = true;
 			movement_mask.y = 0;
 		} else {
 			grounded = false;
 		}
 
-		player_position += movement_direction * 8.0f * (float) time_delta;
-		glm::vec3 player_position_before = player_position;
-		player_velocity += player_gravity * (float) time_delta;
-		player_position += player_velocity * movement_mask * (float) time_delta;
+		//player.body.velocity += player_gravity * (float) time_delta;
+		//player.body.position += player.body.velocity * movement_mask * (float) time_delta;
 		
-		camera_position = player_position + camera_rel_position;
-
-		glm::mat4 mat_view(1);
-		mat_view = glm::rotate(mat_view, camera_rotation.x, glm::vec3(1.0, 0.0, 0.0));
-		mat_view = glm::rotate(mat_view, camera_rotation.y, glm::vec3(0.0, 1.0, 0.0));
-		mat_view = glm::rotate(mat_view, camera_rotation.z, glm::vec3(0.0, 0.0, 1.0));
-		mat_view = glm::translate(mat_view, -camera_position);
-
-		unsigned int u_view = glGetUniformLocation(program.id(), "view");
-		glUniformMatrix4fv(u_view, 1, false, (const float*) &mat_view[0]);
 
 		// Equivalent of swapping buffers
 		glfwSwapBuffers(window);
@@ -336,7 +328,6 @@ int main(void) {
 		}
 
 		frame_count += 1.0;
-		player_position_before = player_position;
 	}
 
 	glfwTerminate();
@@ -356,7 +347,7 @@ GLFWwindow* initialise(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, false);
 
-	GLFWwindow* window = glfwCreateWindow(WIDTH,HEIGHT, "Car Simulation", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH,HEIGHT, "Voxel Game", NULL, NULL);
 
 	if (window == NULL)
 	{
