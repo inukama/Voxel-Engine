@@ -200,6 +200,11 @@ int main(void) {
 	spdlog::info("Starting render loop");
 	while ( !glfwWindowShouldClose(window) )
 	{
+		// Transform mouse from pixels to NDC
+		mouse = 2.0*mouse/DIMS;
+		mouse.x = mouse.x - 1.0;
+		mouse.y = 1.0 - mouse.y;
+		
 		// Update time, cursor position and transform cursor to useful coordinates
 		time_after = glfwGetTime();
 		time_delta = glfwGetTime() - time_before;
@@ -249,17 +254,16 @@ int main(void) {
 			movement_direction += glm::vec3(0.0, -1.0, 0.0);
 		}
 
-
 		player.body.position += movement_direction * 8.0f * (float) time_delta;
+		
+		player.camera.rotation.x += 0.005f*mouse_delta.y;
+		player.camera.rotation.y += 0.005f*mouse_delta.x;
+		player.camera.rotation.x = clamp(player.camera.rotation.x, -M_PI_2, M_PI_2);
 		
 		mat_view = glm::translate(mat_view, -(player.body.position + player.camera.position));
 		unsigned int u_view = glGetUniformLocation(program.id(), "view");
 		glUniformMatrix4fv(u_view, 1, false, (const float*) &mat_view[0]);
 
-		// Transform mouse from pixels to NDC
-		mouse = 2.0*mouse/DIMS;
-		mouse.x = mouse.x - 1.0;
-		mouse.y = 1.0 - mouse.y;
 
 		processInputs(window);
 
@@ -269,11 +273,6 @@ int main(void) {
 		// Game logic
 		
 		// Camera rotation and translation stuff
-		
-		player.camera.rotation.x += 0.005f*mouse_delta.y;
-		player.camera.rotation.y += 0.005f*mouse_delta.x;
-
-		player.camera.rotation.x = clamp(player.camera.rotation.x, -M_PI_2, M_PI_2);
 		
 		program.use();
 
