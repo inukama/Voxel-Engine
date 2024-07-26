@@ -19,7 +19,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "noise.h"
 
 #include "callbacks.h"
 #include "inputs.h"
@@ -34,10 +33,6 @@
 
 #define ASPECT ((float) WIDTH)/((float) HEIGHT)
 #define DIMS glm::vec<2, double>(WIDTH, HEIGHT);
-
-#define MAX_BLOCK_COUNT 60000
-
-#define JUMP_POWER 15.0
 
 
 // Function declarations
@@ -168,18 +163,6 @@ int main(void) {
 	World map;	
 
 	spdlog::info("Generating starter chunk");
-	for (int x = 0; x < CHUNK_SIZE; x++) {
-		for (int y = 0; y < CHUNK_SIZE; y++) {
-			for (int z = 0; z < CHUNK_SIZE; z++) {
-				//spdlog::debug("{}",round(20.0f * perlin2d(x, z, 0.04, 5)) );
-				if(y > round(20.0f * perlin2d(x, z, 0.04, 5))) {
-					map.set_block(glm::vec3(x, y, z), grass);
-				} else {
-					map.set_block(glm::vec3(x, y, z), air);
-				}
-			}
-		}
-	}
 
 	float frame_count = 0.0;
 
@@ -276,10 +259,15 @@ int main(void) {
 		
 		program.use();
 
-		for (int x = 0; x < CHUNK_SIZE; x++) {
-			for (int y = 0; y < CHUNK_SIZE; y++) {
-				for (int z = 0; z < CHUNK_SIZE; z++) {
-					glm::vec3 pos = glm::vec3(x, y, z);
+		for (int x = -CHUNK_SIZE; x < CHUNK_SIZE; x++) {
+			for (int y = -CHUNK_SIZE; y < CHUNK_SIZE; y++) {
+				for (int z = -CHUNK_SIZE; z < CHUNK_SIZE; z++) {
+					glm::vec3 pos = floor(player.body.position + glm::vec3(x, y, z));
+					
+					if (map.get_block(pos).type == air) {
+						continue;
+					}
+
 					glm::mat4 mat_model(1);	
 					mat_model = glm::translate(mat_model, pos);
 					
@@ -301,7 +289,7 @@ int main(void) {
 		//spdlog::debug("Falling on type {} @ ({}, {}, {})", (int) map.get_block(rd_player_pos).type, rd_player_pos.x, rd_player_pos.y, rd_player_pos.z);
 		glm::vec3 check = player.body.position;
 		//spdlog::debug("@ ({}, {}, {})", check.x, check.y, check.z);
-		if (map.get_block(fpos).type == grass) {
+		if (0 && map.get_block(fpos).type == grass) {
 			player.body.position.y = fpos.y + player.hitbox.y/2.0f + 0.5f;
 			player.body.velocity.y = 0.0f;
 			grounded = true;
