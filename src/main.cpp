@@ -31,6 +31,8 @@
 
 #define CHUNK_SIZE 16
 
+#define CHUNK_RENDER_DISTANCE 3
+
 #define ASPECT ((float) WIDTH)/((float) HEIGHT)
 #define DIMS glm::vec<2, double>(WIDTH, HEIGHT);
 
@@ -172,7 +174,7 @@ int main(void) {
 
 	// Spawn pos
 	Player player;
-	player.body.position = glm::vec3(0.0, 40.0, 0.0);
+	player.body.position = glm::vec3(0.0, 0.0, 0.0);
 	player.body.velocity = glm::vec3(0.0, 0.0, 0.0);
 
 	glm::vec3 floor_height = player.body.position;
@@ -183,6 +185,7 @@ int main(void) {
 	spdlog::info("Starting render loop");
 	while ( !glfwWindowShouldClose(window) )
 	{
+
 		// Transform mouse from pixels to NDC
 		mouse = 2.0*mouse/DIMS;
 		mouse.x = mouse.x - 1.0;
@@ -214,7 +217,6 @@ int main(void) {
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 			movement_direction += glm::vec3(-1.0, 0.0, 0.0);
 		}
-
 
 		movement_direction = glm::normalize(movement_direction);
 		if (isnan(movement_direction.x)) {
@@ -259,27 +261,18 @@ int main(void) {
 		
 		program.use();
 
-		for (int x = -CHUNK_SIZE; x < CHUNK_SIZE; x++) {
-			for (int y = -CHUNK_SIZE; y < CHUNK_SIZE; y++) {
-				for (int z = -CHUNK_SIZE; z < CHUNK_SIZE; z++) {
-					glm::vec3 pos = floor(player.body.position + glm::vec3(x, y, z));
+		for (int x = -CHUNK_RENDER_DISTANCE; x < CHUNK_RENDER_DISTANCE; x++) {
+			for (int y = -CHUNK_RENDER_DISTANCE; y < CHUNK_RENDER_DISTANCE; y++) {
+				for (int z = -CHUNK_RENDER_DISTANCE; z < CHUNK_RENDER_DISTANCE; z++) {
+					glm::vec3 pos = ((float) CHUNK_SIZE ) * glm::vec3(x, y, z);
+					pos +=  player.body.position;
 					
-					if (map.get_block(pos).type == air) {
-						continue;
-					}
-
-					glm::mat4 mat_model(1);	
-					mat_model = glm::translate(mat_model, pos);
-					
-					unsigned int u_model = glGetUniformLocation(program.id(), "model");
-					glUniformMatrix4fv(u_model, 1, false, (const float*) &mat_model[0]);
-
-					glBindTexture(GL_TEXTURE_2D, texture);
-					glBindVertexArray(VAO);
-					glDrawArrays(GL_TRIANGLES, 0, 36);
+					map.render(pos);
 				}
 			}
-		} 
+		}
+		
+
 		
 		glm::vec3 temp_floor_height = glm::vec3(-100000.0f);
 		glm::vec<3, int> fpos = floor(player.body.position - player.hitbox/2.0f + 0.5f - 0.001f);
@@ -298,11 +291,7 @@ int main(void) {
 			grounded = false;
 		}
 
-		//player.body.velocity += player_gravity * (float) time_delta;
-		//player.body.position += player.body.velocity * movement_mask * (float) time_delta;
-		
 
-		// Equivalent of swapping buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();	
 
@@ -313,6 +302,7 @@ int main(void) {
 			spdlog::debug("FPS: {}", 1/time_delta);
 			spdlog::debug("{}% of frames are slower than 50fps", slow_count/frame_count*100.0);	
 		}
+			spdlog::debug("FPS: {}", 1/time_delta);
 
 		frame_count += 1.0;
 	}
@@ -327,6 +317,7 @@ int main(void) {
 // Return: GLFW window object
 GLFWwindow* initialise(void)
 {
+		
 	std::cout << "Initialising GLFW" << std::endl;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -344,6 +335,7 @@ GLFWwindow* initialise(void)
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);
 	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
 	std::cout << "Initialising GLAD" << std::endl;
