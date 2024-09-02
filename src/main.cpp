@@ -31,7 +31,7 @@
 
 #define CHUNK_SIZE 16
 
-#define CHUNK_RENDER_DISTANCE 3
+#define CHUNK_RENDER_DISTANCE 7
 
 #define ASPECT ((float) WIDTH)/((float) HEIGHT)
 #define DIMS glm::vec<2, double>(WIDTH, HEIGHT);
@@ -45,6 +45,7 @@ GLFWwindow* initialise(void);
 int main(void) {
 	// Logger setup
 	spdlog::set_level(spdlog::level::debug);
+	//spdlog::set_level(spdlog::level::trace);
 
 	// Initialise window and create program
 	GLFWwindow* window = initialise();
@@ -239,7 +240,7 @@ int main(void) {
 			movement_direction += glm::vec3(0.0, -1.0, 0.0);
 		}
 
-		player.body.position += movement_direction * 8.0f * (float) time_delta;
+		player.body.position += movement_direction * 80.0f * (float) time_delta;
 		
 		player.camera.rotation.x += 0.005f*mouse_delta.y;
 		player.camera.rotation.y += 0.005f*mouse_delta.x;
@@ -302,10 +303,13 @@ int main(void) {
 			spdlog::debug("FPS: {}", 1/time_delta);
 			spdlog::debug("{}% of frames are slower than 50fps", slow_count/frame_count*100.0);	
 		}
-			spdlog::debug("FPS: {}", 1/time_delta);
+		
+		spdlog::debug("FPS: {}", 1/time_delta);
+		//spdlog::debug("Coordinate: <{}, {}, {}>", player.body.position.x, player.body.position.y, player.body.position.z);
 
 		frame_count += 1.0;
 	}
+	
 
 	glfwTerminate();
 	return 0;
