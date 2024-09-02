@@ -31,7 +31,7 @@
 
 #define CHUNK_SIZE 16
 
-#define CHUNK_RENDER_DISTANCE 7
+#define CHUNK_RENDER_DISTANCE 5
 
 #define ASPECT ((float) WIDTH)/((float) HEIGHT)
 #define DIMS glm::vec<2, double>(WIDTH, HEIGHT);
@@ -44,7 +44,7 @@ GLFWwindow* initialise(void);
 
 int main(void) {
 	// Logger setup
-	spdlog::set_level(spdlog::level::debug);
+	spdlog::set_level(spdlog::level::info);
 	//spdlog::set_level(spdlog::level::trace);
 
 	// Initialise window and create program

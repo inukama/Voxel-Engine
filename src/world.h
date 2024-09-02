@@ -5,7 +5,7 @@
 
 #include "model.h"
 
-#define MAX_REGIONS 1000
+#define MAX_REGIONS 100000
 #define REGION_WIDTH 32
 #define CHUNK_WIDTH 16
 

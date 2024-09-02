@@ -18,7 +18,7 @@ Model::Model() {
 } 
 
 void Model::buffer() {
-	spdlog::info("Buffering mesh");
+	spdlog::debug("Buffering mesh");
 	
 	glBindVertexArray(VAO);	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
