@@ -1,6 +1,10 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "patch.h"
+
+#include <unordered_map>
+
 #include <glm/glm.hpp>
 
 #include "model.h"
@@ -83,9 +87,10 @@ class World {
 		World();
 		~World();
 	
-	private:	
-		Region *data[MAX_REGIONS];	
+	private:
+		std::unordered_map<glm::vec<3, int>, Region*> data;	
 };
+
 
 
 

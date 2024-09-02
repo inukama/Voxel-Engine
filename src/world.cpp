@@ -25,27 +25,13 @@ block_type terrain_generator(glm::vec3 coordinate);
 
 World::World() {
 	spdlog::trace("World constructor");
-	for (int i = 0; i < MAX_REGIONS; i++) {
-		data[i] = nullptr;
-	}
+	spdlog::trace("Allocating centre region");
 
-
-	for (int i = 0; i < MAX_REGIONS; i++) {
-		if (data[i] == nullptr) {
-			spdlog::trace("Allocating centre region");
-			data[i] = new Region(glm::vec3(0, 0, 0)); 
-			break;
-		}
-	}
+	data[glm::vec3(0, 0, 0)] = new Region(glm::vec3(0, 0, 0)); 
 }
 
 World::~World() {
-	spdlog::trace("World destructor");
-	for (int region = 0; region < MAX_REGIONS; region++) {
-		if (data[region] != nullptr) {
-			delete(data[region]);	
-		}	
-	}
+	spdlog::trace("World destructor (empty)");
 }
 
 Region::Region(glm::vec3 coordinate): coordinate(region_space(coordinate)) {
@@ -199,38 +185,13 @@ Region *World::get_region(glm::vec3 coordinate) {
 
 	glm::vec<3, int> region_pos = region_space(coordinate);
 
-	int first_empty = -1;
+	Region *region = data[region_pos];
 
-	// Iterate through all regions and check whether the coordinat matches
-	for (int i = 0; i < MAX_REGIONS; i++) {
-		if (data[i] != nullptr && data[i]->coordinate == region_pos) {
-			// Return if a match is found
-			return data[i];
-		} else if (first_empty < 0 && data[i] == nullptr) {
-			first_empty = i;
-		}
+	if (region == nullptr) {
+		data[region_pos] = new Region(coordinate);
 	}
 
-	if (first_empty >= 0) {
-		data[first_empty] = new Region(coordinate);
-		return data[first_empty];
-	}
-
-	// Since a matching region wasn't found, find an empty slot and make one.
-	/*
-	for (int i = 0; i < MAX_REGIONS; i++) {
-		if (data[i] == nullptr) {
-			data[i] = new Region(coordinate);
-			return data[i];
-		}
-	}
-	*/
-
-
-	// This will definitely cause an error!
-	// We only reach this state if the region array is full
-	spdlog::critical("World::get_region::REGION_ARRAY_FULL");
-	return nullptr;
+	return data[region_pos];
 }
 
 

@@ -31,7 +31,7 @@
 
 #define CHUNK_SIZE 16
 
-#define CHUNK_RENDER_DISTANCE 5
+#define CHUNK_RENDER_DISTANCE 10
 
 #define ASPECT ((float) WIDTH)/((float) HEIGHT)
 #define DIMS glm::vec<2, double>(WIDTH, HEIGHT);
@@ -60,103 +60,8 @@ int main(void) {
 	double time_before = time_0;
 	double time_after;
 
-	// Set up model data 
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	spdlog::info("Generating buffers");
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);	
-
-	spdlog::info("Buffering cube model");
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// Retrieve and buffer texture data
-	int width;
-	int height;
-	int nrChannels;
-	
-	// ROOT is a preprocessor directive processed by xmake
-	std::string root_dir = ROOT;
-	std::string img_dir = "/resources/textures/grass16.png";
-	std::string full_img_dir = root_dir + img_dir;
-	spdlog::info("Loading image data from directory: {}", full_img_dir);
-	float *image_data = stbi_loadf(full_img_dir.c_str(), &width, &height, &nrChannels, 0);
-	
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	if (image_data && nrChannels == 3) {
-		spdlog::info("Buffering image data");
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, image_data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	} else {
-		spdlog::error("Failed to load texture");
-	}	
-
-	stbi_image_free(image_data);
-
 	// Set up transformation matrices and other things
-	glm::mat4 mat_projection = glm::perspective(glm::radians(45.0f), ASPECT, 0.1f, 100.0f);
+	glm::mat4 mat_projection = glm::perspective(glm::radians(45.0f), ASPECT, 0.1f, 10000.0f);
 	unsigned int u_projection = glGetUniformLocation(program.id(), "projection");
 	glUniformMatrix4fv(u_projection, 1, false, (const float*) &mat_projection[0]);
 
@@ -177,11 +82,6 @@ int main(void) {
 	Player player;
 	player.body.position = glm::vec3(0.0, 0.0, 0.0);
 	player.body.velocity = glm::vec3(0.0, 0.0, 0.0);
-
-	glm::vec3 floor_height = player.body.position;
-	glm::vec3 player_gravity = glm::vec3(0.0, -30.0, 0.0);
-	
-	bool grounded;
 
 	spdlog::info("Starting render loop");
 	while ( !glfwWindowShouldClose(window) )
@@ -240,7 +140,7 @@ int main(void) {
 			movement_direction += glm::vec3(0.0, -1.0, 0.0);
 		}
 
-		player.body.position += movement_direction * 80.0f * (float) time_delta;
+		player.body.position += movement_direction * 8.0f * (float) time_delta;
 		
 		player.camera.rotation.x += 0.005f*mouse_delta.y;
 		player.camera.rotation.y += 0.005f*mouse_delta.x;
@@ -272,26 +172,8 @@ int main(void) {
 				}
 			}
 		}
+	
 		
-
-		
-		glm::vec3 temp_floor_height = glm::vec3(-100000.0f);
-		glm::vec<3, int> fpos = floor(player.body.position - player.hitbox/2.0f + 0.5f - 0.001f);
-
-		glm::vec3 movement_mask = glm::vec3(1, 1, 1);
-
-		//spdlog::debug("Falling on type {} @ ({}, {}, {})", (int) map.get_block(rd_player_pos).type, rd_player_pos.x, rd_player_pos.y, rd_player_pos.z);
-		glm::vec3 check = player.body.position;
-		//spdlog::debug("@ ({}, {}, {})", check.x, check.y, check.z);
-		if (0 && map.get_block(fpos).type == grass) {
-			player.body.position.y = fpos.y + player.hitbox.y/2.0f + 0.5f;
-			player.body.velocity.y = 0.0f;
-			grounded = true;
-			movement_mask.y = 0;
-		} else {
-			grounded = false;
-		}
-
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();	
@@ -304,7 +186,7 @@ int main(void) {
 			spdlog::debug("{}% of frames are slower than 50fps", slow_count/frame_count*100.0);	
 		}
 		
-		spdlog::debug("FPS: {}", 1/time_delta);
+		//spdlog::info("FPS: {}", 1/time_delta);
 		//spdlog::debug("Coordinate: <{}, {}, {}>", player.body.position.x, player.body.position.y, player.body.position.z);
 
 		frame_count += 1.0;
